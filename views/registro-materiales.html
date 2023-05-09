@@ -13,8 +13,9 @@
 
   <div class="container">
     <div class="mt-3">
-
+      <!-- Formulario de registro de materiales -->
       <form action="" autocomplete="off" id="formulario-material">
+        <!-- Inicio del Card -->
         <div class="card">
           <div class="card-header bg-success text-light fw-bold">
             <h4>Registro de materiales</h4>
@@ -71,15 +72,15 @@
                 <div class="row mb-3">
                   <div class="col-md-4">
                     <label for="version" class="form-label">Versión:</label>
-                    <input type="number" id="version" class="form-control">
+                    <input type="text" id="version" class="form-control">
                   </div>
                   <div class="col-md-4">
                     <label for="cantidadpaginas" class="form-label">Cantidad páginas:</label>
-                    <input type="number" id="cantidadpaginas" class="form-control">
+                    <input type="text" id="cantidadpaginas" class="form-control">
                   </div>
                   <div class="col-md-4">
                     <label for="aniopublicacion" class="form-label">Año publicación:</label>
-                    <input type="number" id="aniopublicacion" class="form-control">
+                    <input type="text" id="aniopublicacion" class="form-control">
                   </div>
                 </div>
 
@@ -97,12 +98,12 @@
                   </div>
                   <div class="col-md-6">
                     <label for="portada">Portada(Opcional):</label>
-                    <input type="file" accept=".jpg" class="form-control mt-2" id="portada ">
+                    <input type="file" accept=".jpg,.jpeg,.png" class="form-control mt-2" id="portada">
                   </div>
                 </div>
 
-                <div>
-                  <img src="" alt="" id="portada-preview">
+                <div class="border rounded-3" style="width: 630; height: 280px; overflow: hidden;">
+                  <img src="../images/image-preview.jpg" alt="" id="portada-preview" class="img-thumbnail" style="width: 100%; height: 100%;">
                 </div>
 
               </div>
@@ -125,15 +126,18 @@
     import CanvasConfetti from 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/+esm';
     document.addEventListener("DOMContentLoaded", () => {
 
-      const categoria = document.querySelector("#categoria");
-      const $subcategoria = document.querySelector("#subcategoria");
-      const editorial = document.querySelector("#editorial");
-
-      const $sinopsis = document.querySelector("#sinopsis");
-
-      const $guardar = document.querySelector("#guardar");
-
+      //Elementos select
+      const selectCategoria = document.querySelector("#categoria");
+      const selectSubcategoria = document.querySelector("#subcategoria");
       let subCategorias = [];
+      const selectEditorial = document.querySelector("#editorial");
+
+      const sinopsis = document.querySelector("#sinopsis");
+
+      const portada = document.querySelector("#portada");
+      const portadaPreview = document.querySelector("#portada-preview");
+
+      const guardar = document.querySelector("#guardar");
 
       function cargarCategorias() {
         const parametros = new URLSearchParams();
@@ -171,30 +175,40 @@
       categoria.addEventListener("change", (event) => {
         const idCategoriaSeleccionada = event.target.value;
         
-        $subcategoria.innerHTML = "";
+        selectSubcategoria.innerHTML = "";
         if (idCategoriaSeleccionada === '') {
-          $subcategoria.disabled = true;
+          selectSubcategoria.disabled = true;
         } else {
-          $subcategoria.disabled = false;
+          selectSubcategoria.disabled = false;
           const filter = subCategorias.filter(
             ({ idcategoria }) => idcategoria == idCategoriaSeleccionada
           );
 
           if (!filter.length){
-            $subcategoria.disabled = true;
+            selectSubcategoria.disabled = true;
           }
 
           filter.forEach(({ idsubcategoria, subcategoria }) => {
-            $subcategoria.innerHTML += `<option value='${idsubcategoria}'>${subcategoria}</option>`;
+            selectSubcategoria.innerHTML += `<option value='${idsubcategoria}'>${subcategoria}</option>`;
           });
         }
-      })
-
-      $sinopsis.addEventListener("input", (event) => {
-        document.querySelector("#contador").textContent = $sinopsis.value.length
       });
 
-      $guardar.addEventListener("click", () => {
+      sinopsis.addEventListener("input", (event) => {
+        document.querySelector("#contador").textContent = sinopsis.value.length;
+      });
+
+      portada.addEventListener("change", (event) => {
+        const file = event.target.files[0];
+
+        if (file) {
+          const objectURL = URL.createObjectURL(file);
+          portadaPreview.src = objectURL;
+          portadaPreview.style.objectFit = "contain";
+        }
+      });
+      
+      guardar.addEventListener("click", () => {
         CanvasConfetti();
       });
 
@@ -202,24 +216,25 @@
         cargarCategorias(), 
         cargarSubcategorias(), 
         cargarEditoriales()
-      ]).then((response) => {
+      ])
+      .then((response) => {
         const [ dataCategoria, dataSubcategoria, dataEditorial ] = response;
         
         subCategorias = dataSubcategoria;
-        categoria.innerHTML = "<option value=''>Seleccione</option>";
+        selectCategoria.innerHTML = "<option value=''>Seleccione</option>";
         dataCategoria.forEach(element => {
           let opcion = `
             <option value='${element.idcategoria}'>${element.categoria}</option>
           `;
-          categoria.innerHTML += opcion;
+          selectCategoria.innerHTML += opcion;
         });
 
-        editorial.innerHTML = "<option value=''>Seleccione</option>";
+        selectEditorial.innerHTML = "<option value=''>Seleccione</option>";
         dataEditorial.forEach(element => {
           let opcion = `
             <option value='${element.ideditorial}'>${element.editorial}</option>
           `;
-          editorial.innerHTML += opcion;
+          selectEditorial.innerHTML += opcion;
         });
       });
 
