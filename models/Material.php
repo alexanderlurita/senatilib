@@ -10,6 +10,17 @@ class Material extends Conexion {
     $this->conexion = parent::getConexion();
   }
 
+  public function listar() {
+    try {
+      $consulta = $this->conexion->prepare("CALL spu_materiales_listar()");
+      $consulta->execute();
+      return $consulta->fetchAll(PDO::FETCH_ASSOC);
+    } catch(Exception $e) {
+      $respuesta["message"] = "No se ha podido completar el proceso. Código de error: " . $e->getCode();
+    }
+  }
+
+
   public function registrar($datos = []) {
     $respuesta = [
       "status"  => false,
@@ -29,7 +40,7 @@ class Material extends Conexion {
           $datos["cantpaginas"],
           $datos["apublicacion"],
           $datos["caratula"],
-          $datos["materialpdf"],
+          $datos["materialpdf"]
         )
       );
     } catch(Exception $e) {

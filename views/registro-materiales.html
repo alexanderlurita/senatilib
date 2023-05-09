@@ -5,14 +5,14 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro de materiales</title>
-
+  
   <!-- Bootstrap v5.2 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 </head>
 <body>
 
   <div class="container">
-    <div class="mt-3">
+    <div class="mt-4">
       <!-- Formulario de registro de materiales -->
       <form action="" autocomplete="off" id="formulario-material">
         <!-- Inicio del Card -->
@@ -102,19 +102,19 @@
                   </div>
                 </div>
 
-                <div class="border rounded-3" style="width: 630; height: 280px; overflow: hidden;">
+                <div class="border rounded-3" style="width: 630; height: 300px; overflow: hidden;">
                   <img src="../images/image-preview.jpg" alt="" id="portada-preview" class="img-thumbnail" style="width: 100%; height: 100%;">
                 </div>
 
               </div>
             </div>
 
-          </div>
+          </div> <!-- Fin card body -->
   
           <div class="card-footer">
             <div class="text-end">
               <button type="button" class="btn btn-success" id="guardar">Guardar</button>
-              <button type="reset" class="btn btn-secondary">Reiniciar</button>
+              <button type="button" class="btn btn-secondary" id="reiniciar">Reiniciar</button>
             </div>
           </div> <!-- Fin card-footer -->
         </div> <!-- Fin card -->
@@ -122,22 +122,34 @@
     </div>
   </div> <!-- Fin container -->
 
-  <script type="module">
-    import CanvasConfetti from 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/+esm';
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- JS-Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
+
+  <script>
     document.addEventListener("DOMContentLoaded", () => {
+
+      const jsConfetti = new JSConfetti();
 
       //Elementos select
       const selectCategoria = document.querySelector("#categoria");
       const selectSubcategoria = document.querySelector("#subcategoria");
       let subCategorias = [];
       const selectEditorial = document.querySelector("#editorial");
-
+      const titulo = document.querySelector("#titulo");
       const sinopsis = document.querySelector("#sinopsis");
-
+      const version = document.querySelector("#version");
+      const cantpaginas = document.querySelector("#cantidadpaginas");
+      const aniopublicacion = document.querySelector("#aniopublicacion");
+      const autor = document.querySelector("#autor");
+      const materialpdf = document.querySelector("#materialpdf")
       const portada = document.querySelector("#portada");
       const portadaPreview = document.querySelector("#portada-preview");
 
       const guardar = document.querySelector("#guardar");
+      const reiniciar = document.querySelector("#reiniciar");
 
       function cargarCategorias() {
         const parametros = new URLSearchParams();
@@ -170,6 +182,86 @@
           body: parametros
         })
           .then(response => response.json())
+      }
+
+      function registrarMaterial() {        
+        if (
+            !selectSubcategoria.value ||
+            !titulo.value ||
+            !sinopsis.value ||
+            !version.value ||
+            !cantpaginas.value ||
+            !aniopublicacion.value ||
+            !autor.value ||
+            !materialpdf.value
+          ) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Completa los campos por favor',
+            icon: 'error'
+          });
+        } else {
+          Swal.fire({
+            icon: 'question',
+            title: '¿Estás seguro de registrar?',
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Cancelar',
+            focusCancel: true
+          }).then((result) => {
+            if(result.isConfirmed) {
+              const fd = new FormData();
+              fd.append("operacion", "registrar");
+              fd.append("idsubcategoria", selectSubcategoria.value);
+              fd.append("ideditorial", selectEditorial.value);
+              fd.append("titulo", titulo.value);
+              fd.append("sinopsis", sinopsis.value);
+              fd.append("versionmat", version.value);
+              fd.append("autor", autor.value)
+              fd.append("cantpaginas", cantpaginas.value);
+              fd.append("apublicacion", aniopublicacion.value);
+              fd.append("caratula", portada.files[0]);
+              fd.append("materialpdf", materialpdf.files[0]);
+
+              fetch('../controllers/Material.controller.php', {
+                method: 'POST',
+                body: fd
+              })
+              .then(response => response.json())
+              .then(datos => {
+                if (datos.status) {
+                  Swal.fire({
+                    icon: 'success',
+                    title: 'Correcto!',
+                    text: 'Nuevo registro agregado correctamente',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    didOpen: () => {
+                      jsConfetti.addConfetti();
+                    },
+                    didClose: reiniciarFormulario
+                  });
+                } else {
+                  Swal.fire({
+                    title: 'Error!',
+                    text: datos.message,
+                    icon: 'error'
+                  })
+                }
+              }); // Fin fetch
+            } // Fin confirmed
+          }) // Fin then
+        } // Fin else
+      }
+
+      function reiniciarFormulario() {
+        document.getElementById("formulario-material").reset();
+        selectSubcategoria.innerHTML = "";
+        selectSubcategoria.disabled = true;
+        document.querySelector("#contador").textContent = 0;
+        portadaPreview.src = '../images/image-preview.jpg';
+        portadaPreview.style.objectFit = "";  
+        selectCategoria.focus();
       }
 
       categoria.addEventListener("change", (event) => {
@@ -208,9 +300,9 @@
         }
       });
       
-      guardar.addEventListener("click", () => {
-        CanvasConfetti();
-      });
+      guardar.addEventListener("click", registrarMaterial);
+
+      reiniciar.addEventListener("click", reiniciarFormulario);
 
       Promise.all([
         cargarCategorias(), 

@@ -81,8 +81,20 @@ INSERT INTO materiales
 	(idsubcategoria, ideditorial, titulo, sinopsis, autor, cantpaginas, apublicacion, materialpdf) VALUES
 	(1, 3, 'Aprende Excel fácil', 'MS Excel 365 integración con PowerBI', 'Carlos Padra Perez', 300, '2022', 'ruta'),
 	(4, 1, 'JS como debe ser', 'Aprende JS desde cero con este libro fácil de leer', 'Miguel Munayco Gonzales', 280, '2023', 'ruta');
-	
-SELECT * FROM materiales;
+
+DELIMITER $$
+CREATE PROCEDURE spu_materiales_listar()
+BEGIN
+	SELECT	MAT.idmaterial, SUB.subcategoria, EDI.editorial,
+				MAT.titulo, MAT.sinopsis, MAT.versionmat,
+				MAT.autor, MAT.cantpaginas, MAT.apublicacion, 
+				MAT.caratula, MAT.materialpdf
+		FROM materiales MAT
+		INNER JOIN subcategorias SUB ON MAT.idsubcategoria = SUB.idsubcategoria
+		INNER JOIN editoriales EDI ON MAT.ideditorial = EDI.ideditorial
+		WHERE MAT.estado = '1'
+		ORDER BY 1 DESC;
+END $$
 
 DELIMITER $$
 CREATE PROCEDURE spu_materiales_registrar
@@ -103,7 +115,7 @@ BEGIN
 	IF _caratula = '' THEN SET _caratula = NULL; END IF;
 		
 	INSERT INTO materiales 
-	(idsubcategoria, ideditorial, titulo, sinopsis, versionmat, autor, cantpaginas, apublicacion, materialpdf) 
+	(idsubcategoria, ideditorial, titulo, sinopsis, versionmat, autor, cantpaginas, apublicacion, caratula, materialpdf) 
 	VALUES
 	(_idsubcategoria, _ideditorial, _titulo, _sinopsis, _versionmat, _autor, _cantpaginas, _apublicacion, _caratula, _materialpdf);
 END $$
@@ -132,4 +144,4 @@ BEGIN
 		WHERE estado = 1;
 END $$
 
-CALL spu_editoriales_listar();
+CALL spu_materiales_listar();
