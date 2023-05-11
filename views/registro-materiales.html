@@ -8,6 +8,8 @@
   
   <!-- Bootstrap v5.2 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="../styles/estilos.css">
 </head>
 <body>
 
@@ -17,7 +19,7 @@
       <form action="" autocomplete="off" id="formulario-material">
         <!-- Inicio del Card -->
         <div class="card">
-          <div class="card-header bg-success text-light fw-bold">
+          <div class="card-header bg-success text-light">
             <h4>Registro de materiales</h4>
           </div>
 
@@ -28,32 +30,32 @@
 
                 <div class="row mb-3">
                   <div class="col-md-6">
-                    <label for="categoria" class="form-label">Categoria:</label>
+                    <label for="categoria" class="form-label">Categoria *</label>
                     <select id="categoria" class="form-select" autofocus></select>
                   </div>
                   <div class="col-md-6">
-                    <label for="subcategoria" class="form-label">Subcategoria:</label>
+                    <label for="subcategoria" class="form-label">Subcategoria *</label>
                     <select id="subcategoria" class="form-select" disabled></select>
                   </div>
                 </div>
                 
                 <div class="row mb-3">
                   <div class="col-md-12">
-                    <label for="editorial" class="form-label">Editorial:</label>
+                    <label for="editorial" class="form-label">Editorial</label>
                     <select id="editorial" class="form-select"></select>
                   </div>
                 </div>
 
                 <div class="row mb-3">
                   <div class="col-md-12">
-                    <label for="titulo" class="form-label">Titulo:</label>
-                    <input type="text" id="titulo" class="form-control">
+                    <label for="titulo" class="form-label">Titulo *</label>
+                    <input type="text" id="titulo" class="form-control" maxlength="200">
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="col-md-12">
-                    <label for="sinopsis" class="form-label">Sinopsis:</label>
+                    <label for="sinopsis" class="form-label">Sinopsis *</label>
                     <textarea id="sinopsis" class="form-control" cols="30" rows="5" maxlength="300"></textarea>
                   </div>
                 </div>
@@ -71,33 +73,33 @@
                 
                 <div class="row mb-3">
                   <div class="col-md-4">
-                    <label for="version" class="form-label">Versión:</label>
-                    <input type="text" id="version" class="form-control">
+                    <label for="version" class="form-label">Versión *</label>
+                    <input type="text" id="version" class="form-control" maxlength="3">
                   </div>
                   <div class="col-md-4">
-                    <label for="cantidadpaginas" class="form-label">Cantidad páginas:</label>
-                    <input type="text" id="cantidadpaginas" class="form-control">
+                    <label for="cantidadpaginas" class="form-label">Cantidad páginas *</label>
+                    <input type="text" id="cantidadpaginas" class="form-control" maxlength="5">
                   </div>
                   <div class="col-md-4">
-                    <label for="aniopublicacion" class="form-label">Año publicación:</label>
-                    <input type="text" id="aniopublicacion" class="form-control">
+                    <label for="aniopublicacion" class="form-label">Año publicación *</label>
+                    <input type="text" id="aniopublicacion" class="form-control" maxlength="4">
                   </div>
                 </div>
 
                 <div class="row mb-3">
                   <div class="col-md-12">
-                    <label for="autor" class="form-label">Autor:</label>
-                    <input type="text" id="autor" class="form-control">
+                    <label for="autor" class="form-label">Autor *</label>
+                    <input type="text" id="autor" class="form-control" maxlength="100">
                   </div>
                 </div>
 
                 <div class="row mb-3">
                   <div class="col-md-6">
-                    <label for="materialpdf">PDF:</label>
+                    <label for="materialpdf">PDF *</label>
                     <input type="file" accept=".pdf" class="form-control mt-2" id="materialpdf">
                   </div>
                   <div class="col-md-6">
-                    <label for="portada">Portada(Opcional):</label>
+                    <label for="portada">Portada</label>
                     <input type="file" accept=".jpg,.jpeg,.png" class="form-control mt-2" id="portada">
                   </div>
                 </div>
@@ -112,9 +114,18 @@
           </div> <!-- Fin card body -->
   
           <div class="card-footer">
-            <div class="text-end">
-              <button type="button" class="btn btn-success" id="guardar">Guardar</button>
-              <button type="button" class="btn btn-secondary" id="reiniciar">Reiniciar</button>
+            <div class="row align-items-center">
+              <div class="col text-start">
+                * los campos son obligatorios.
+              </div>
+              <div class="col text-end ">
+                <button type="button" class="btn btn-success" id="guardar">
+                  <i class="fa-solid fa-floppy-disk"></i> Guardar
+                </button>
+                <button type="button" class="btn btn-secondary" id="reiniciar">
+                  <i class="fa-solid fa-rotate-left"></i> Reiniciar
+                </button>
+              </div>
             </div>
           </div> <!-- Fin card-footer -->
         </div> <!-- Fin card -->
@@ -122,16 +133,14 @@
     </div>
   </div> <!-- Fin container -->
 
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/f5edb5ee55.js" crossorigin="anonymous"></script>
+
   <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <!-- JS-Confetti -->
-  <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
-
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-
-      const jsConfetti = new JSConfetti();
 
       //Elementos select
       const selectCategoria = document.querySelector("#categoria");
@@ -196,8 +205,8 @@
             !materialpdf.value
           ) {
           Swal.fire({
-            title: 'Error!',
-            text: 'Completa los campos por favor',
+            title: 'Formulario  incompleto',
+            text: 'Por favor complete los campos obligatorios',
             icon: 'error'
           });
         } else {
@@ -232,14 +241,14 @@
                 if (datos.status) {
                   Swal.fire({
                     icon: 'success',
-                    title: 'Correcto!',
-                    text: 'Nuevo registro agregado correctamente',
+                    title: 'Registro completado',
+                    text: 'Nuevo material registrado con éxito',
                     showConfirmButton: false,
-                    timer: 1500,
-                    didOpen: () => {
-                      jsConfetti.addConfetti();
-                    },
-                    didClose: reiniciarFormulario
+                    timer: 3000,
+                    didClose: () => {
+                      reiniciarFormulario();
+                      location.href = '../index.html';
+                    }
                   });
                 } else {
                   Swal.fire({
@@ -321,7 +330,7 @@
           selectCategoria.innerHTML += opcion;
         });
 
-        selectEditorial.innerHTML = "<option value=''>Seleccione</option>";
+        selectEditorial.innerHTML = "<option value='0'>Seleccione</option>";
         dataEditorial.forEach(element => {
           let opcion = `
             <option value='${element.ideditorial}'>${element.editorial}</option>

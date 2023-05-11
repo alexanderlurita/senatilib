@@ -91,7 +91,7 @@ BEGIN
 				MAT.caratula, MAT.materialpdf
 		FROM materiales MAT
 		INNER JOIN subcategorias SUB ON MAT.idsubcategoria = SUB.idsubcategoria
-		INNER JOIN editoriales EDI ON MAT.ideditorial = EDI.ideditorial
+		LEFT JOIN editoriales EDI ON MAT.ideditorial = EDI.ideditorial
 		WHERE MAT.estado = '1'
 		ORDER BY 1 DESC;
 END $$
